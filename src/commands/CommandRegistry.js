@@ -8,7 +8,8 @@ export class CommandRegistry {
   }
 
   findCommand(args) {
-    return this.commands.find(command => command.canHandle(args));
+    return this.commands.find((command) => command.canHandle(args));
+    console.log("nothing");
   }
 
   getAllCommands() {
@@ -16,7 +17,7 @@ export class CommandRegistry {
   }
 
   getHelpText() {
-    return this.commands.map(cmd => cmd.getHelp()).join("\n");
+    return this.commands.map((cmd) => cmd.getHelp()).join("\n");
   }
 }
 
