@@ -1,7 +1,11 @@
 // import OpenAI from "openai";
 import dotenv from "dotenv";
 import OpenAI from "openai/index.js";
-dotenv.config({ silent: true });
+// Suppress dotenv output by temporarily overriding console.log
+const originalLog = console.log;
+console.log = () => {};
+dotenv.config();
+console.log = originalLog;
 
 // console.log("API KEY", process.env.OPENAI_API_KEY);
 const openai = new OpenAI({
