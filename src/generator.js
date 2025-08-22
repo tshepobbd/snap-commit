@@ -7,13 +7,13 @@ import dotenv from "dotenv";
 //heu there
 dotenv.config();
 
-console.log("OPENAI_API_KEY:", process.env.OPENAI_API_KEY);
+// console.log("OPENAI_API_KEY:", process.env.OPENAI_API_KEY);
 
 const client = new PostHog("phc_6Q1Lzrq9R0ZL6STL5y4oz7tmdpYBBmClnhfMhj1D3x3", {
   host: "https://us.i.posthog.com",
 });
 
-console.log("API KEY", process.env.OPENAI_API_KEY);
+// console.log("API KEY", process.env.OPENAI_API_KEY);
 // Check if API key is availablee
 if (!process.env.OPENAI_API_KEY) {
   console.error(
