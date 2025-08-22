@@ -5,7 +5,11 @@ import { PostHog } from "posthog-node";
 import chalk from "chalk";
 import dotenv from "dotenv";
 //heu there
+// Suppress dotenv output by temporarily overriding console.log
+const originalLog = console.log;
+console.log = () => {};
 dotenv.config();
+console.log = originalLog;
 
 // console.log("OPENAI_API_KEY:", process.env.OPENAI_API_KEY);
 
