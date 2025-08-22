@@ -1,17 +1,20 @@
 // import OpenAI from "openai";
-import dotenv from "dotenv";
+
 import OpenAI from "openai/index.js";
 import { PostHog } from "posthog-node";
 import chalk from "chalk";
-
-// Load environment variables first
+import dotenv from "dotenv";
+//heu there
 dotenv.config();
+
+console.log("OPENAI_API_KEY:", process.env.OPENAI_API_KEY);
 
 const client = new PostHog("phc_6Q1Lzrq9R0ZL6STL5y4oz7tmdpYBBmClnhfMhj1D3x3", {
   host: "https://us.i.posthog.com",
 });
 
-// Check if API key is available
+console.log("API KEY", process.env.OPENAI_API_KEY);
+// Check if API key is availablee
 if (!process.env.OPENAI_API_KEY) {
   console.error(
     chalk.red("❌ OPENAI_API_KEY environment variable is not set.")
