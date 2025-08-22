@@ -11,6 +11,18 @@ const openai = new OpenAI({
 
 export async function generateMessage(diff, variation = 0) {
   // Show animated thinking message
+  const frames = [
+    "🤔 Thinking",
+    "🤔 Thinking.",
+    "🤔 Thinking..",
+    "🤔 Thinking...",
+  ];
+  let frameIndex = 0;
+
+  const loadingInterval = setInterval(() => {
+    process.stdout.write(`\r${frames[frameIndex]}`);
+    frameIndex = (frameIndex + 1) % frames.length;
+  }, 300);
 
   // Use OpenAI to generate multiple commit suggestions
   const prompt = `
@@ -33,6 +45,7 @@ Respond ONLY with a JSON object like:
 Make the messages:
 - specific descriptive of the changes (max 72 chars)
 - focus on what changed and why. 
+- if multiple files are staged, summarize changes per area/module instead of one generic commit message.
 - follow conventional commits if applicable (feat, fix, chore)
 - unique from each other
 `;
