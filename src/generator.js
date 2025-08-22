@@ -14,20 +14,6 @@ const openai = new OpenAI({
 });
 
 export async function generateMessage(diff, variation = 0) {
-  // Show animated thinking message
-  const frames = [
-    "🤔 Thinking",
-    "🤔 Thinking.",
-    "🤔 Thinking..",
-    "🤔 Thinking...",
-  ];
-  let frameIndex = 0;
-
-  const loadingInterval = setInterval(() => {
-    process.stdout.write(`\r${frames[frameIndex]}`);
-    frameIndex = (frameIndex + 1) % frames.length;
-  }, 300);
-
   // Use OpenAI to generate multiple commit suggestions
   const prompt = `
 You are an expert software engineer that writes concise, meaningful git commit messages.
@@ -69,10 +55,6 @@ Make the messages:
     temperature: 0.7,
     max_tokens: 500,
   });
-
-  // Clear the animated thinking message
-  clearInterval(loadingInterval);
-  process.stdout.write("\r" + " ".repeat(20) + "\r");
 
   const text = completion.choices[0].message.content.trim();
 
