@@ -4,7 +4,7 @@ import { PostHog } from "posthog-node";
 // Initialize PostHog client
 const client = new PostHog("phc_6Q1Lzrq9R0ZL6STL5y4oz7tmdpYBBmClnhfMhj1D3x3", {
   host: "https://us.i.posthog.com",
-  flushAt: 1, // send immediately (good for CLI tools)
+  flushAt: 1, // send immediately (good for CLI tools) here
 });
 
 /**

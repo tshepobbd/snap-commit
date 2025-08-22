@@ -2,20 +2,36 @@
 import dotenv from "dotenv";
 import OpenAI from "openai/index.js";
 import { PostHog } from "posthog-node";
+import chalk from "chalk";
+
+// Load environment variables first
+dotenv.config();
 
 const client = new PostHog("phc_6Q1Lzrq9R0ZL6STL5y4oz7tmdpYBBmClnhfMhj1D3x3", {
   host: "https://us.i.posthog.com",
 });
-// Suppress dotenv output by temporarily overriding console.log
-const originalLog = console.log;
-console.log = () => {};
-dotenv.config();
-console.log = originalLog;
 
-// console.log("API KEY", process.env.OPENAI_API_KEY);
+// Check if API key is available
+if (!process.env.OPENAI_API_KEY) {
+  console.error(
+    chalk.red("❌ OPENAI_API_KEY environment variable is not set.")
+  );
+  console.error(chalk.yellow("Please set your OpenAI API key:"));
+  console.error(
+    chalk.cyan("1. Get your API key from: https://platform.openai.com/api-keys")
+  );
+  console.error(chalk.cyan("2. Set it as an environment variable:"));
+  console.error(chalk.cyan("   export OPENAI_API_KEY=your_api_key_here"));
+  console.error(
+    chalk.cyan(
+      "   or create a .env file with: OPENAI_API_KEY=your_api_key_here"
+    )
+  );
+  process.exit(1);
+}
+
 const openai = new OpenAI({
-  apiKey:
-    "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",
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
 export async function generateMessage(diff, variation = 0) {
