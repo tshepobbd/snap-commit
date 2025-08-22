@@ -4,7 +4,8 @@
   "type": "module",
   "bin": {
     "commit-gen": "./bin/commit-gen.js",
-    "git-commit-gen": "./bin/commit-gen.js"
+    "git-commit-gen": "./bin/commit-gen.js",
+    "cg": "./bin/commit-gen.js"
   },
   "dependencies": {
     "inquirer": "^12.9.3",
