@@ -1,1 +1,5 @@
-#this is a test
+### Publishing to NPM Registry
+
+````bash
+npm publish --access=public ```
+````

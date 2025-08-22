@@ -1,6 +1,11 @@
 // import OpenAI from "openai";
 import dotenv from "dotenv";
 import OpenAI from "openai/index.js";
+import { PostHog } from "posthog-node";
+
+const client = new PostHog("phc_6Q1Lzrq9R0ZL6STL5y4oz7tmdpYBBmClnhfMhj1D3x3", {
+  host: "https://us.i.posthog.com",
+});
 // Suppress dotenv output by temporarily overriding console.log
 const originalLog = console.log;
 console.log = () => {};
@@ -10,7 +15,7 @@ console.log = originalLog;
 // console.log("API KEY", process.env.OPENAI_API_KEY);
 const openai = new OpenAI({
   apiKey:
-    "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",
+    "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",
 });
 
 export async function generateMessage(diff, variation = 0) {
@@ -70,10 +75,36 @@ Make the messages:
 
     const data = JSON.parse(jsonText);
     if (Array.isArray(data.messages)) {
+      // Track successful AI generation
+      client.capture({
+        distinctId: `user_${Math.random().toString(36).substr(2, 9)}`,
+        event: "ai_generation_successful",
+        properties: {
+          variation,
+          messageCount: data.messages.length,
+          model: "gpt-3.5-turbo",
+          temperature: 0.7,
+          responseLength: text.length,
+          timestamp: new Date().toISOString(),
+        },
+      });
       return data.messages[variation % data.messages.length]; // pick one for the variation index
     }
   } catch (err) {
     console.error("❌ Failed to parse AI response:", text, err);
+
+    // Track AI generation failure
+    client.capture({
+      distinctId: `user_${Math.random().toString(36).substr(2, 9)}`,
+      event: "ai_generation_failed",
+      properties: {
+        variation,
+        error: err.message,
+        responseText: text.substring(0, 200), // First 200 chars for debugging
+        model: "gpt-3.5-turbo",
+        timestamp: new Date().toISOString(),
+      },
+    });
   }
 
   // fallback if parsing fails
