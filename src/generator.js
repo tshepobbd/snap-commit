@@ -58,9 +58,17 @@ Make the messages:
 
   const text = completion.choices[0].message.content.trim();
 
-  // parse JSON safely
+  // parse JSON safely - handle markdown code blocks
   try {
-    const data = JSON.parse(text);
+    // Remove markdown code blocks if present
+    let jsonText = text;
+    if (text.startsWith("```json")) {
+      jsonText = text.replace(/^```json\n/, "").replace(/\n```$/, "");
+    } else if (text.startsWith("```")) {
+      jsonText = text.replace(/^```\n/, "").replace(/\n```$/, "");
+    }
+
+    const data = JSON.parse(jsonText);
     if (Array.isArray(data.messages)) {
       return data.messages[variation % data.messages.length]; // pick one for the variation index
     }
