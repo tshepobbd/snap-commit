@@ -26,15 +26,6 @@ export default async function run() {
         options.push(await generateMessage(diff, i));
       }
 
-      //   const { choice } = await inquirer.prompt([
-      //     {
-      //       type: "list",
-      //       name: "choice",
-      //       message: "Pick a commit message:",
-      //       choices: options,
-      //     },
-      //   ]);
-
       // let user pick one
       const { choice } = await inquirer.prompt([
         {
