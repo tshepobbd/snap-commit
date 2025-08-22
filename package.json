@@ -1,14 +1,40 @@
 {
   "name": "snap-commit",
   "version": "1.0.0",
+  "description": "An intelligent Git commit message generator powered by OpenAI",
   "type": "module",
+  "main": "src/index.js",
   "bin": {
     "commit-gen": "./bin/commit-gen.js",
     "git-commit-gen": "./bin/commit-gen.js"
+  },
+  "scripts": {
+    "start": "node bin/commit-gen.js",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix"
   },
   "dependencies": {
     "inquirer": "^12.9.3",
     "openai": "^5.12.2",
     "dotenv": "^17.2.1"
+  },
+  "devDependencies": {
+    "jest": "^29.0.0",
+    "eslint": "^8.0.0"
+  },
+  "keywords": [
+    "git",
+    "commit",
+    "ai",
+    "openai",
+    "cli",
+    "automation"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=16.0.0"
   }
 }
