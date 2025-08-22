@@ -1,7 +1,7 @@
 // import OpenAI from "openai";
 import dotenv from "dotenv";
 import OpenAI from "openai/index.js";
-dotenv.config();
+dotenv.config({ silent: true });
 
 // console.log("API KEY", process.env.OPENAI_API_KEY);
 const openai = new OpenAI({
