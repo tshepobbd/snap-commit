@@ -11,18 +11,6 @@ const openai = new OpenAI({
 
 export async function generateMessage(diff, variation = 0) {
   // Show animated thinking message
-  const frames = [
-    "🤔 Thinking",
-    "🤔 Thinking.",
-    "🤔 Thinking..",
-    "🤔 Thinking...",
-  ];
-  let frameIndex = 0;
-
-  const loadingInterval = setInterval(() => {
-    process.stdout.write(`\r${frames[frameIndex]}`);
-    frameIndex = (frameIndex + 1) % frames.length;
-  }, 300);
 
   // Use OpenAI to generate multiple commit suggestions
   const prompt = `
