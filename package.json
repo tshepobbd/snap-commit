@@ -1,0 +1,14 @@
+{
+  "name": "snap-commit",
+  "version": "1.0.0",
+  "type": "module",
+  "bin": {
+    "commit-gen": "./bin/commit-gen.js",
+    "git-commit-gen": "./bin/commit-gen.js"
+  },
+  "dependencies": {
+    "inquirer": "^12.9.3",
+    "openai": "^5.12.2",
+    "dotenv": "^17.2.1"
+  }
+}
