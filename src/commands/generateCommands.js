@@ -317,7 +317,7 @@ export class GenerateCommand {
     // For npm global installations, we need to check the command that was actually invoked
     // The command name is passed as an environment variable or we can check process.argv[0]
 
-    // Check if we can get the command from the process title or argv
+    // Check if we can get the command from the process title or argv here
     const processTitle = process.title || "";
     const argv0 = process.argv[0] || "";
 
