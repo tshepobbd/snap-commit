@@ -4,20 +4,20 @@ export class OpenAIProvider {
   constructor() {
     // Backend service URL - update this to your deployed URL
     this.backendUrl =
-      process.env.SNAP_COMMIT_BACKEND_URL ||
-      "https://your-backend-url.onrender.com";
+      process.env.SNAP_COMMIT_BACKEND_URL || "http://localhost:3000";
     this.model = "gpt-3.5-turbo";
   }
 
   async generateCommitMessages(diff, count = 3) {
     try {
+      console.log("This backend url is", this.backendUrl);
       const response = await fetch(`${this.backendUrl}/api/generate-commit`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          diff: diff.substring(0, 3000),
+          diff: diff,
           count: count,
         }),
       });
