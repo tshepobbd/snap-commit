@@ -145,8 +145,8 @@ export class GenerateCommand {
       const message = await this.ai.generateSingleMessage(diff);
       spinner.succeed(chalk.green("✨ Generated commit message!"));
 
-      console.log(chalk.cyan("\n📝 Commit message:"));
-      console.log(chalk.white.bold(`  ${message}\n`));
+      // console.log(chalk.cyan("\n📝 Commit message:"));
+      // console.log(chalk.white.bold(`  ${message}\n`));
 
       await this.commitMessage(message, fullCommand, false);
     } catch (error) {
