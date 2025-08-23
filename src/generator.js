@@ -28,7 +28,7 @@ if (!process.env.OPENAI_API_KEY) {
   console.error(
     chalk.cyan("1. Get your API key from: https://platform.openai.com/api-keys")
   );
-  console.error(chalk.cyan("2. Set it as an environment variable:"));
+  console.error(chalk.cyan("2. Set it as an environment variable:"));//this is a  comment
   console.error(chalk.cyan("   export OPENAI_API_KEY=your_api_key_here"));
   console.error(
     chalk.cyan(
