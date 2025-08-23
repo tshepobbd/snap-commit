@@ -175,6 +175,11 @@ export class GenerateCommand {
   ) {
     const commitSpinner = ora(chalk.blue("🚀 Committing changes...")).start();
 
+    // Debug: Log push command status
+    console.log(
+      `DEBUG: isPushCommand = ${isPushCommand}, command = ${fullCommand}`
+    );
+
     try {
       let tempFile = null;
 
