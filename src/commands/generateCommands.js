@@ -173,12 +173,7 @@ export class GenerateCommand {
     isMultiLine,
     isPushCommand = false
   ) {
-    const commitSpinner = ora(chalk.blue("🚀 Committing changes.....")).start();
-
-    // Debug: Log push command status
-    console.log(
-      `DEBUG: isPushCommand = ${isPushCommand}, command = ${fullCommand}`
-    );
+    const commitSpinner = ora(chalk.blue("🚀 Committing changes...")).start();
 
     try {
       let tempFile = null;
@@ -319,24 +314,38 @@ export class GenerateCommand {
   }
 
   getCommandName() {
-    // The actual command name is in the last part of process.argv[1]
-    // For npm bin links, it's usually in the path structure
-    const scriptPath = process.argv[1];
+    // For npm global installations, we need to check the command that was actually invoked
+    // The command name is passed as an environment variable or we can check process.argv[0]
 
-    // Extract command from path - check for our known commands
-    if (scriptPath.includes("cgp")) return "cgp";
-    if (scriptPath.includes("commit-gen-push")) return "commit-gen-push";
+    // Check if we can get the command from the process title or argv
+    const processTitle = process.title || "";
+    const argv0 = process.argv[0] || "";
+
+    // Look for our commands in the process title or argv0
+    if (processTitle.includes("cgp") || argv0.includes("cgp")) return "cgp";
     if (
-      scriptPath.includes("commit-gen") &&
-      !scriptPath.includes("commit-gen-push")
+      processTitle.includes("commit-gen-push") ||
+      argv0.includes("commit-gen-push")
     )
+      return "commit-gen-push";
+    if (processTitle.includes("commit-gen") || argv0.includes("commit-gen"))
       return "commit-gen";
-    if (scriptPath.includes("git-commit-gen")) return "git-commit-gen";
-    if (scriptPath.includes("cg") && !scriptPath.includes("cgp")) return "cg";
+    if (
+      processTitle.includes("git-commit-gen") ||
+      argv0.includes("git-commit-gen")
+    )
+      return "git-commit-gen";
+    if (processTitle.includes("cg") || argv0.includes("cg")) return "cg";
 
-    // Fallback to the original logic
-    return (
-      process.argv[1].split("/").pop() || process.argv[1].split("\\").pop()
-    );
+    // Fallback: check if any of our commands are in the full command line
+    const fullCommand = process.argv.join(" ");
+    if (fullCommand.includes("cgp")) return "cgp";
+    if (fullCommand.includes("commit-gen-push")) return "commit-gen-push";
+    if (fullCommand.includes("commit-gen")) return "commit-gen";
+    if (fullCommand.includes("git-commit-gen")) return "git-commit-gen";
+    if (fullCommand.includes("cg")) return "cg";
+
+    // Final fallback
+    return "commit-gen";
   }
 }
