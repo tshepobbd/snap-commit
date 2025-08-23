@@ -47,44 +47,4 @@ export class AIService {
     const messages = await this.generateMessages(diff, 3);
     return messages[variation % messages.length];
   }
-
-  /**
-   * Detect languages from diff
-   * @param {string} diff - Git diff
-   * @returns {string[]} Detected languages
-   */
-  detectLanguages(diff) {
-    const extensions = {
-      '.js': 'JavaScript',
-      '.jsx': 'React',
-      '.ts': 'TypeScript',
-      '.tsx': 'React TypeScript',
-      '.py': 'Python',
-      '.java': 'Java',
-      '.go': 'Go',
-      '.rs': 'Rust',
-      '.rb': 'Ruby',
-      '.php': 'PHP',
-      '.cs': 'C#',
-      '.cpp': 'C++',
-      '.html': 'HTML',
-      '.css': 'CSS',
-      '.json': 'JSON',
-      '.md': 'Markdown'
-    };
-
-    const languages = new Set();
-    const fileRegex = /(?:\+\+\+|---) [ab]\/(.+)/g;
-    let match;
-
-    while ((match = fileRegex.exec(diff)) !== null) {
-      const filename = match[1];
-      const ext = filename.substring(filename.lastIndexOf('.'));
-      if (extensions[ext]) {
-        languages.add(extensions[ext]);
-      }
-    }
-
-    return Array.from(languages);
-  }
 }

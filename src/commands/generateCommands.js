@@ -42,12 +42,7 @@ export class GenerateCommand {
       process.exit(1);
     }
 
-    // Detect languages
-    const languages = this.ai.detectLanguages(diff);
-    if (languages.length > 0) {
-      console.log(chalk.cyan(`📝 Languages detected: ${languages.join(', ')}`));
-    }
-    //udno last commit
+    //undo last commit
     if (args.includes("--undo")) {
     await this.undoLastCommit(fullCommand);
     return;
