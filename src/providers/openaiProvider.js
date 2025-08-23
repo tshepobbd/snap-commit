@@ -10,7 +10,7 @@ export class OpenAIProvider {
 
   async generateCommitMessages(diff, count = 3) {
     try {
-      console.log("This backend url is", this.backendUrl);
+      //console.log("This backend url is", this.backendUrl);
       const response = await fetch(`${this.backendUrl}/api/generate-commit`, {
         method: "POST",
         headers: {
