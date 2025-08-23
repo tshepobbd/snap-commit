@@ -4,7 +4,7 @@ Backend API service for the snap-commit CLI tool that handles OpenAI API calls s
 
 ## Features
 
-- 🔒 **Secure**: API key stored server-side, never exposed to clients
+- 🔒 **Secure**: API key stored server-side here, never exposed to clients
 - 🚀 **Fast**: Optimized for quick commit message generation
 - 🛡️ **Protected**: Rate limiting and CORS protection
 - 📊 **Reliable**: Fallback responses and error handling
