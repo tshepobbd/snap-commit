@@ -319,6 +319,22 @@ export class GenerateCommand {
   }
 
   getCommandName() {
+    // The actual command name is in the last part of process.argv[1]
+    // For npm bin links, it's usually in the path structure
+    const scriptPath = process.argv[1];
+
+    // Extract command from path - check for our known commands
+    if (scriptPath.includes("cgp")) return "cgp";
+    if (scriptPath.includes("commit-gen-push")) return "commit-gen-push";
+    if (
+      scriptPath.includes("commit-gen") &&
+      !scriptPath.includes("commit-gen-push")
+    )
+      return "commit-gen";
+    if (scriptPath.includes("git-commit-gen")) return "git-commit-gen";
+    if (scriptPath.includes("cg") && !scriptPath.includes("cgp")) return "cg";
+
+    // Fallback to the original logic
     return (
       process.argv[1].split("/").pop() || process.argv[1].split("\\").pop()
     );
