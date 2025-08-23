@@ -118,7 +118,7 @@ Make the messages:
         return data.messages;
       }
 
-      throw new Error("Invalid response format");
+      throw new Error("Invalid response formatt here");
     } catch (error) {
       console.error("Failed to parse AI responses:", error.message);
       // Fallback messages
