@@ -8,7 +8,7 @@ Backend API service for the snap-commit CLI tool that handles OpenAI API calls s
 - 🚀 **Fast**: Optimized for quick commit message generation
 - 🛡️ **Protected**: Rate limiting and CORS protection
 - 📊 **Reliable**: Fallback responses and error handling
-- 🔧 **Configurable**: Environment-based configuration
+- 🔧 **Configurable**: Environment-based configurationn
 
 ## Quick Start
 
