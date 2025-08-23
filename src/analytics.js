@@ -11,7 +11,7 @@ const client = new PostHog("phc_6Q1Lzrq9R0ZL6STL5y4oz7tmdpYBBmClnhfMhj1D3x3", {
  * Track an event in PostHog here
  * @param {string} eventName - Name of the eventtttt
  * @param {object} properties - Extra properties about the event
- * @param {string} userId - Optional unique ID for the user
+ * @param {string} userId - Optional unique ID for the user here, user here
  */
 export function trackEvent(eventName, properties = {}, userId = "anonymous") {
   try {
