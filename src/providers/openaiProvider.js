@@ -61,7 +61,7 @@ export class OpenAIProvider {
 
       return data.messages;
     } catch (error) {
-      console.error("Failed to generate commit messages:", error.message);
+      console.error("Failed to generate commit messagess:", error.message);
 
       // Return fallback messages
       return [
