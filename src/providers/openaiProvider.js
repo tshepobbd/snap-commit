@@ -4,7 +4,7 @@ export class OpenAIProvider {
   constructor() {
     // Backend service URL - update this to your deployed URL
     this.backendUrl =
-      process.env.SNAP_COMMIT_BACKEND_URL || "http://localhost:3000";
+      process.env.SNAP_COMMIT_BACKEND_URL || "https://snap-commit.onrender.com";
     this.model = "gpt-3.5-turbo";
   }
 
