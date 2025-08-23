@@ -173,7 +173,7 @@ export class GenerateCommand {
     isMultiLine,
     isPushCommand = false
   ) {
-    const commitSpinner = ora(chalk.blue("🚀 Committing changes...")).start();
+    const commitSpinner = ora(chalk.blue("🚀 Committing changes.....")).start();
 
     // Debug: Log push command status
     console.log(
