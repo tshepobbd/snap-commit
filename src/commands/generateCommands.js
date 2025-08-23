@@ -23,7 +23,7 @@ export class GenerateCommand {
     this.analytics.trackEvent("cli_run", {
       command: fullCommand,
       args: args,
-      aliasUsed: command === "cg" || command === "git-commit-gen",
+      aliasUsed: command === "cg" || command === "git-commit-gen" || command === "commit-gen",
     });
 
     // Check if in git repository

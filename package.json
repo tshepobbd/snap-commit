@@ -1,7 +1,9 @@
 {
   "name": "snap-commit",
   "version": "1.0.5",
+  "description": "AI-powered commit message generator",
   "type": "module",
+  "main": "src/index.js",
   "bin": {
     "commit-gen": "./bin/commit-gen.js",
     "git-commit-gen": "./bin/commit-gen.js",
