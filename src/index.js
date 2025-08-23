@@ -1,4 +1,4 @@
-import { GenerateCommand } from './commands/generate.command.js';
+import { GenerateCommand } from './commands/generateCommands.js';
 
 export default async function run() {
   try {

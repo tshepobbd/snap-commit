@@ -4,9 +4,9 @@ import os from "os";
 import path from "path";
 import chalk from "chalk";
 import ora from "ora";
-import { GitService } from '../services/git.service.js';
-import { AIService } from '../services/ai.service.js';
-import { AnalyticsService } from '../services/analytics.service.js';
+import { GitService } from '../services/gitService.js';
+import { AIService } from '../services//generatorService.js';
+import { AnalyticsService } from '../services/analyticService.js';
 
 export class GenerateCommand {
   constructor() {

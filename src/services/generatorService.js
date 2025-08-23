@@ -1,5 +1,5 @@
-import { OpenAIProvider } from '../providers/openai.provider.js';
-import { AnalyticsService } from './analytics.service.js';
+import { OpenAIProvider } from '../providers/openaiProvider.js';
+import { AnalyticsService } from './analyticService.js';
 import chalk from "chalk";
 
 export class AIService {
