@@ -20,6 +20,9 @@ export class GenerateCommand {
     const command = this.getCommandName();
     const fullCommand = `${command} ${args.join(" ")}`.trim();
 
+    // Check if this is a push command
+    const isPushCommand = command === "cgp" || command === "commit-gen-push";
+
     // Track CLI run
     this.analytics.trackEvent("cli_run", {
       command: fullCommand,
@@ -27,7 +30,10 @@ export class GenerateCommand {
       aliasUsed:
         command === "cg" ||
         command === "git-commit-gen" ||
-        command === "commit-gen",
+        command === "commit-gen" ||
+        command === "cgp" ||
+        command === "commit-gen-push",
+      isPushCommand: isPushCommand,
     });
 
     // Check if in git repository
@@ -56,16 +62,26 @@ export class GenerateCommand {
     if (args[0]?.startsWith("-")) {
       const count = parseInt(args[0].slice(1), 10);
       if (!isNaN(count) && count > 0) {
-        await this.handleMultiMessageMode(diff, count, fullCommand);
+        await this.handleMultiMessageMode(
+          diff,
+          count,
+          fullCommand,
+          isPushCommand
+        );
         return;
       }
     }
 
     // Default single-message mode
-    await this.handleSingleMessageMode(diff, fullCommand);
+    await this.handleSingleMessageMode(diff, fullCommand, isPushCommand);
   }
 
-  async handleMultiMessageMode(diff, count, fullCommand) {
+  async handleMultiMessageMode(
+    diff,
+    count,
+    fullCommand,
+    isPushCommand = false
+  ) {
     this.analytics.trackEvent("multi_message_mode", {
       command: fullCommand,
       requestedCount: count,
@@ -120,7 +136,7 @@ export class GenerateCommand {
 
       // Commit
       if (final.trim().length > 0) {
-        await this.commitMessage(final, fullCommand, true);
+        await this.commitMessage(final, fullCommand, true, isPushCommand);
       } else {
         console.log(chalk.red("❌ Empty commit message, aborting."));
       }
@@ -131,7 +147,7 @@ export class GenerateCommand {
     }
   }
 
-  async handleSingleMessageMode(diff, fullCommand) {
+  async handleSingleMessageMode(diff, fullCommand, isPushCommand = false) {
     this.analytics.trackEvent("single_message_mode", { command: fullCommand });
 
     const spinner = ora(chalk.blue("🎯 Generating commit message...")).start();
@@ -143,7 +159,7 @@ export class GenerateCommand {
       // console.log(chalk.cyan("\n📝 Commit message:"));
       // console.log(chalk.white.bold(`  ${message}\n`));
 
-      await this.commitMessage(message, fullCommand, false);
+      await this.commitMessage(message, fullCommand, false, isPushCommand);
     } catch (error) {
       spinner.fail(chalk.red("❌ Failed to generate message"));
       console.error(chalk.red(error.message));
@@ -151,7 +167,12 @@ export class GenerateCommand {
     }
   }
 
-  async commitMessage(message, fullCommand, isMultiLine) {
+  async commitMessage(
+    message,
+    fullCommand,
+    isMultiLine,
+    isPushCommand = false
+  ) {
     const commitSpinner = ora(chalk.blue("🚀 Committing changes...")).start();
 
     try {
@@ -171,8 +192,13 @@ export class GenerateCommand {
         isMultiLine,
       });
 
-      // Ensure proper exit after successful commit
-      process.exit(0);
+      // Push if this is a push command
+      if (isPushCommand) {
+        await this.pushChanges(fullCommand);
+      } else {
+        // Ensure proper exit after successful commit
+        process.exit(0);
+      }
     } catch (error) {
       commitSpinner.fail(chalk.red("❌ Commit failed!"));
       console.error(chalk.red(error.message));
@@ -229,6 +255,33 @@ export class GenerateCommand {
         command: fullCommand,
         error: error.message,
       });
+    }
+  }
+
+  async pushChanges(fullCommand) {
+    const pushSpinner = ora(chalk.blue("🚀 Pushing changes...")).start();
+
+    try {
+      this.git.push();
+      pushSpinner.succeed(chalk.green("✅ Push successful!"));
+
+      this.analytics.trackEvent("push_successful", {
+        command: fullCommand,
+      });
+
+      // Ensure proper exit after successful push
+      process.exit(0);
+    } catch (error) {
+      pushSpinner.fail(chalk.red("❌ Push failed!"));
+      console.error(chalk.red(error.message));
+
+      this.analytics.trackEvent("push_failed", {
+        command: fullCommand,
+        error: error.message,
+      });
+
+      // Ensure proper exit after failed push
+      process.exit(1);
     }
   }
 

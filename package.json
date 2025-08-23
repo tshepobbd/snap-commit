@@ -7,7 +7,9 @@
   "bin": {
     "commit-gen": "./bin/commit-gen.js",
     "git-commit-gen": "./bin/commit-gen.js",
-    "cg": "./bin/commit-gen.js"
+    "cg": "./bin/commit-gen.js",
+    "cgp": "./bin/commit-gen.js",
+    "commit-gen-push": "./bin/commit-gen.js"
   },
   "dependencies": {
     "@inquirer/prompts": "^7.8.3",
