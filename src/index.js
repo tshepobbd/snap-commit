@@ -107,7 +107,7 @@ export default async function run() {
         selectedMessage: choice,
       });
 
-      // let user edit it with beautiful input
+      // let user edit it with beautiful inputt
       const final = await input({
         message: chalk.cyan("✏️  Edit commit message before committing:"),
         default: choice,
