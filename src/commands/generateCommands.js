@@ -4,9 +4,10 @@ import os from "os";
 import path from "path";
 import chalk from "chalk";
 import ora from "ora";
-import { GitService } from '../services/gitService.js';
-import { AIService } from '../services//generatorService.js';
-import { AnalyticsService } from '../services/analyticService.js';
+import readline from "readline";
+import { GitService } from "../services/gitService.js";
+import { AIService } from "../services//generatorService.js";
+import { AnalyticsService } from "../services/analyticService.js";
 
 export class GenerateCommand {
   constructor() {
@@ -23,7 +24,10 @@ export class GenerateCommand {
     this.analytics.trackEvent("cli_run", {
       command: fullCommand,
       args: args,
-      aliasUsed: command === "cg" || command === "git-commit-gen" || command === "commit-gen",
+      aliasUsed:
+        command === "cg" ||
+        command === "git-commit-gen" ||
+        command === "commit-gen",
     });
 
     // Check if in git repository
@@ -45,12 +49,12 @@ export class GenerateCommand {
     // Detect languages
     const languages = this.ai.detectLanguages(diff);
     if (languages.length > 0) {
-      console.log(chalk.cyan(`📝 Languages detected: ${languages.join(', ')}`));
+      console.log(chalk.cyan(`📝 Languages detected: ${languages.join(", ")}`));
     }
     //udno last commit
     if (args.includes("--undo")) {
-    await this.undoLastCommit(fullCommand);
-    return;
+      await this.undoLastCommit(fullCommand);
+      return;
     }
 
     // Handle multi-message mode (e.g., commit-gen -3)
@@ -72,11 +76,15 @@ export class GenerateCommand {
       requestedCount: count,
     });
 
-    const spinner = ora(chalk.blue("🎯 Generating commit message options...")).start();
+    const spinner = ora(
+      chalk.blue("🎯 Generating commit message options...")
+    ).start();
 
     try {
       const messages = await this.ai.generateMessages(diff, count);
-      spinner.succeed(chalk.green(`✨ Generated ${messages.length} commit message options!`));
+      spinner.succeed(
+        chalk.green(`✨ Generated ${messages.length} commit message options!`)
+      );
 
       // Let user pick one
       const choice = await select({
@@ -92,15 +100,27 @@ export class GenerateCommand {
         selectedIndex: messages.indexOf(choice),
       });
 
-      // Let user edit
-      const final = await input({
-        message: chalk.cyan("✏️  Edit commit message before committing:"),
-        default: choice,
+      // Show selected message
+      // console.log(chalk.cyan("\n📝 Selected message:"));
+      // console.log(chalk.white.bold(`  ${choice}\n`));
+
+      // Ask if user wants to edit
+      const wantsToEdit = await confirm({
+        message: chalk.cyan("✏️  Do you want to edit this message?"),
+        default: false,
       });
+
+      let final = choice;
+
+      if (wantsToEdit) {
+        // Use custom readline to properly pre-fill text
+        final = await this.editMessage(choice);
+      }
 
       this.analytics.trackEvent("message_edited", {
         command: fullCommand,
         wasEdited: final !== choice,
+        userChoseToEdit: wantsToEdit,
       });
 
       // Commit
@@ -124,7 +144,7 @@ export class GenerateCommand {
     try {
       const message = await this.ai.generateSingleMessage(diff);
       spinner.succeed(chalk.green("✨ Generated commit message!"));
-      
+
       console.log(chalk.cyan("\n📝 Commit message:"));
       console.log(chalk.white.bold(`  ${message}\n`));
 
@@ -141,8 +161,8 @@ export class GenerateCommand {
 
     try {
       let tempFile = null;
-      
-      if (isMultiLine || message.includes('\n')) {
+
+      if (isMultiLine || message.includes("\n")) {
         tempFile = path.join(os.tmpdir(), "snap-commit-msg.txt");
         writeFileSync(tempFile, message, "utf8");
       }
@@ -155,6 +175,9 @@ export class GenerateCommand {
         messageLength: message.length,
         isMultiLine,
       });
+
+      // Ensure proper exit after successful commit
+      process.exit(0);
     } catch (error) {
       commitSpinner.fail(chalk.red("❌ Commit failed!"));
       console.error(chalk.red(error.message));
@@ -163,43 +186,88 @@ export class GenerateCommand {
         command: fullCommand,
         error: error.message,
       });
+
+      // Ensure proper exit after failed commit
+      process.exit(1);
     }
   }
 
-    async undoLastCommit(fullCommand) {
-    this.analytics.trackEvent("undo_last_commit_attempt", { command: fullCommand });
+  async undoLastCommit(fullCommand) {
+    this.analytics.trackEvent("undo_last_commit_attempt", {
+      command: fullCommand,
+    });
 
     // Ask for confirmation
     const proceed = await confirm({
-        message: chalk.yellow("⚠️  Are you sure you want to undo the last commit? (changes will be staged)"),
-        default: false,
+      message: chalk.yellow(
+        "⚠️  Are you sure you want to undo the last commit? (changes will be staged)"
+      ),
+      default: false,
     });
 
     if (!proceed) {
-        console.log(chalk.cyan("ℹ️  Undo cancelled."));
-        this.analytics.trackEvent("undo_last_commit_cancelled", { command: fullCommand });
-        return;
+      console.log(chalk.cyan("ℹ️  Undo cancelled."));
+      this.analytics.trackEvent("undo_last_commit_cancelled", {
+        command: fullCommand,
+      });
+      return;
     }
 
     const spinner = ora(chalk.blue("⏪ Undoing last commit...")).start();
 
     try {
-        this.git.undoLastCommit();
-        spinner.succeed(chalk.green("✅ Last commit has been undone (changes restored to staging)."));
+      this.git.undoLastCommit();
+      spinner.succeed(
+        chalk.green(
+          "✅ Last commit has been undone (changes restored to staging)."
+        )
+      );
 
-        this.analytics.trackEvent("undo_last_commit_success", { command: fullCommand });
+      this.analytics.trackEvent("undo_last_commit_success", {
+        command: fullCommand,
+      });
     } catch (error) {
-        spinner.fail(chalk.red("❌ Failed to undo last commit."));
-        console.error(chalk.red(error.message));
+      spinner.fail(chalk.red("❌ Failed to undo last commit."));
+      console.error(chalk.red(error.message));
 
-        this.analytics.trackEvent("undo_last_commit_failed", {
+      this.analytics.trackEvent("undo_last_commit_failed", {
         command: fullCommand,
         error: error.message,
-        });
+      });
     }
-    }
+  }
+
+  async editMessage(currentMessage) {
+    return new Promise((resolve) => {
+      // Pause stdin to prevent conflicts
+      process.stdin.pause();
+
+      const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout,
+      });
+
+      // Pre-fill the input with the current message
+      process.stdout.write(chalk.cyan("✏️  Edit commit message: "));
+      rl.write(currentMessage);
+
+      rl.on("line", (input) => {
+        rl.close();
+        // Resume stdin after closing
+        process.stdin.resume();
+        resolve(input.trim() || currentMessage);
+      });
+
+      // Handle cleanup on close
+      rl.on("close", () => {
+        process.stdin.resume();
+      });
+    });
+  }
 
   getCommandName() {
-    return process.argv[1].split("/").pop() || process.argv[1].split("\\").pop();
+    return (
+      process.argv[1].split("/").pop() || process.argv[1].split("\\").pop()
+    );
   }
 }
