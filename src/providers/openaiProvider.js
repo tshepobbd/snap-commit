@@ -19,31 +19,42 @@ export class OpenAIProvider {
 
   validateApiKey() {
     if (!process.env.OPENAI_API_KEY) {
-      console.error(chalk.red("\n❌ OPENAI_API_KEY environment variable is not set.\n"));
+      console.error(
+        chalk.red("\n❌ OPENAI_API_KEY environment variable is not set.\n")
+      );
       console.error(chalk.yellow("Please set your OpenAI API key:"));
-      console.error(chalk.cyan("1. Get your API key from: https://platform.openai.com/api-keys"));
+      console.error(
+        chalk.cyan(
+          "1. Get your API key from: https://platform.openai.com/api-keys"
+        )
+      );
       console.error(chalk.cyan("2. Set it as an environment variable:"));
       console.error(chalk.cyan("   export OPENAI_API_KEY=your_api_key_here"));
-      console.error(chalk.cyan("   or create a .env file with: OPENAI_API_KEY=your_api_key_here\n"));
+      console.error(
+        chalk.cyan(
+          "   or create a .env file with: OPENAI_API_KEY=your_api_key_here\n"
+        )
+      );
       process.exit(1);
     }
   }
 
   async generateCommitMessages(diff, count = 3) {
     const prompt = this.buildPrompt(diff, count);
-    
+
     try {
       const completion = await this.client.chat.completions.create({
         model: this.model,
         messages: [
           {
             role: "system",
-            content: "You are a helpful assistant that writes concise, meaningful git commit messages and returns clean JSON."
+            content:
+              "You are a helpful assistant that writes concise, meaningful git commit messages and returns clean JSON.",
           },
           {
             role: "user",
-            content: prompt
-          }
+            content: prompt,
+          },
         ],
         temperature: 0.7,
         max_tokens: 500,
@@ -51,11 +62,13 @@ export class OpenAIProvider {
 
       return this.parseResponse(completion.choices[0].message.content);
     } catch (error) {
-      if (error.code === 'insufficient_quota') {
-        throw new Error('OpenAI API quota exceeded. Please check your billing.');
+      if (error.code === "insufficient_quota") {
+        throw new Error(
+          "OpenAI API quota exceeded. Please check your billing."
+        );
       }
-      if (error.code === 'invalid_api_key') {
-        throw new Error('Invalid OpenAI API key. Please check your .env file.');
+      if (error.code === "invalid_api_key") {
+        throw new Error("Invalid OpenAI API key. Please check your .env file.");
       }
       throw error;
     }
@@ -100,19 +113,19 @@ Make the messages:
       }
 
       const data = JSON.parse(jsonText);
-      
+
       if (Array.isArray(data.messages) && data.messages.length > 0) {
         return data.messages;
       }
-      
+
       throw new Error("Invalid response format");
     } catch (error) {
-      console.error("Failed to parse AI response:", error.message);
+      console.error("Failed to parse AI responses:", error.message);
       // Fallback messages
       return [
         "chore: update code",
         "fix: resolve issues",
-        "feat: add new functionality"
+        "feat: add new functionality",
       ];
     }
   }
