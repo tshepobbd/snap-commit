@@ -1,3 +1,4 @@
+// index.js
 import { getStagedDiff } from "./git.js";
 import { generateMessage } from "./generator.js";
 import { execSync } from "child_process";

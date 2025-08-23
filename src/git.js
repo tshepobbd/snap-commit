@@ -1,3 +1,4 @@
+// git.js
 import { execSync } from "child_process";
 
 export function getStagedDiff() {
