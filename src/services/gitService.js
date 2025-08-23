@@ -50,6 +50,15 @@ export class GitService {
     }
   }
 
+  static undoLastCommit() {
+  try {
+    execSync("git reset --soft HEAD~1", { stdio: "inherit" });
+    return true;
+  } catch (error) {
+    throw new Error(`Undo last commit failed: ${error.message}`);
+  }
+}
+
   /**
    * Check if we're in a git repository
    * @returns {boolean}

@@ -1,4 +1,4 @@
-import { select, input } from "@inquirer/prompts";
+import { select, input, confirm } from "@inquirer/prompts";
 import { writeFileSync } from "fs";
 import os from "os";
 import path from "path";
@@ -46,6 +46,11 @@ export class GenerateCommand {
     const languages = this.ai.detectLanguages(diff);
     if (languages.length > 0) {
       console.log(chalk.cyan(`📝 Languages detected: ${languages.join(', ')}`));
+    }
+    //udno last commit
+    if (args.includes("--undo")) {
+    await this.undoLastCommit(fullCommand);
+    return;
     }
 
     // Handle multi-message mode (e.g., commit-gen -3)
@@ -160,6 +165,39 @@ export class GenerateCommand {
       });
     }
   }
+
+    async undoLastCommit(fullCommand) {
+    this.analytics.trackEvent("undo_last_commit_attempt", { command: fullCommand });
+
+    // Ask for confirmation
+    const proceed = await confirm({
+        message: chalk.yellow("⚠️  Are you sure you want to undo the last commit? (changes will be staged)"),
+        default: false,
+    });
+
+    if (!proceed) {
+        console.log(chalk.cyan("ℹ️  Undo cancelled."));
+        this.analytics.trackEvent("undo_last_commit_cancelled", { command: fullCommand });
+        return;
+    }
+
+    const spinner = ora(chalk.blue("⏪ Undoing last commit...")).start();
+
+    try {
+        this.git.undoLastCommit();
+        spinner.succeed(chalk.green("✅ Last commit has been undone (changes restored to staging)."));
+
+        this.analytics.trackEvent("undo_last_commit_success", { command: fullCommand });
+    } catch (error) {
+        spinner.fail(chalk.red("❌ Failed to undo last commit."));
+        console.error(chalk.red(error.message));
+
+        this.analytics.trackEvent("undo_last_commit_failed", {
+        command: fullCommand,
+        error: error.message,
+        });
+    }
+    }
 
   getCommandName() {
     return process.argv[1].split("/").pop() || process.argv[1].split("\\").pop();
