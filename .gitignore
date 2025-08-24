@@ -3,6 +3,7 @@
 .env.local
 .env.*.local
 
+
 # Dependencies
 node_modules/
 
@@ -41,3 +42,7 @@ jspm_packages/
 
 # dotenv environment variables file
 .env
+
+# Next.js build output
+.next/
+.next
